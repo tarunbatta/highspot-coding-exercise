@@ -10,10 +10,9 @@ namespace highspot.Helper
             string result = string.Empty;
 
             try
-            {   // Open the text file using a stream reader.
+            {
                 using (StreamReader sr = new StreamReader(file))
                 {
-                    // Read the stream to a string, and write the string to the console.
                     result = sr.ReadToEnd();
                 }
             }
@@ -23,6 +22,11 @@ namespace highspot.Helper
             }
 
             return result;
+        }
+
+        public static void WriteFile(string file, string text)
+        {
+            System.IO.File.WriteAllText(file, text);
         }
     }
 }
