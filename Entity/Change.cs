@@ -7,7 +7,7 @@ namespace highspot.Entity
     public class Change
     {
         [JsonConverter(typeof(ChangeConverter))]
-        public List<IChange> changes { get; set; }
+        public List<IChange> changes { get; set; } = new List<IChange>();
 
         public Change()
         {

@@ -16,13 +16,13 @@ namespace highspot.Entity
             return objectType == typeof(IChange);
         }
         public override void WriteJson(JsonWriter writer,
-            object value, JsonSerializer serializer)
+            object? value, JsonSerializer serializer)
         {
             throw new InvalidOperationException("Use default serialization.");
         }
 
-        public override object ReadJson(JsonReader reader,
-            Type objectType, object existingValue,
+        public override object? ReadJson(JsonReader reader,
+            Type objectType, object? existingValue,
             JsonSerializer serializer)
         {
             var fields = new List<IChange>();
@@ -34,12 +34,20 @@ namespace highspot.Entity
             {
                 // Create a form field instance by the field type ID.
                 var jsonObject = item as JObject;
+                if (jsonObject == null)
+                {
+                    continue;
+                }
 
-                var addSong = jsonObject["add_song"] == null ? null : JsonConvert.DeserializeObject<AddSong>(jsonObject["add_song"].ToString());
-                var addPlaylist = jsonObject["add_playlist"] == null ? null : JsonConvert.DeserializeObject<AddPlaylist>(jsonObject["add_playlist"].ToString());
-                var removePlaylist = jsonObject["rm_playlist"] == null ? null : JsonConvert.DeserializeObject<RemovePlaylist>(jsonObject["rm_playlist"].ToString());
+                string? addSongStr = jsonObject["add_song"]?.ToString();
+                string? addPlaylistStr = jsonObject["add_playlist"]?.ToString();
+                string? removePlaylistStr = jsonObject["rm_playlist"]?.ToString();
 
-                dynamic instance = new AddSong();
+                var addSong = !string.IsNullOrEmpty(addSongStr) ? JsonConvert.DeserializeObject<AddSong>(addSongStr) : null;
+                var addPlaylist = !string.IsNullOrEmpty(addPlaylistStr) ? JsonConvert.DeserializeObject<AddPlaylist>(addPlaylistStr) : null;
+                var removePlaylist = !string.IsNullOrEmpty(removePlaylistStr) ? JsonConvert.DeserializeObject<RemovePlaylist>(removePlaylistStr) : null;
+
+                IChange? instance = null;
 
                 if (addSong != null)
                 {
@@ -54,7 +62,10 @@ namespace highspot.Entity
                     instance = removePlaylist;
                 }
 
-                fields.Add(instance);
+                if (instance != null)
+                {
+                    fields.Add(instance);
+                }
             }
 
             return fields;

@@ -23,7 +23,7 @@ namespace highspot
             }
 
             string mixTapeData = Utility.ReadFile(Config.folder_assets + file_mixtape);
-            Mixtape mixTape = JsonConvert.DeserializeObject<Mixtape>(mixTapeData);
+            Mixtape? mixTape = JsonConvert.DeserializeObject<Mixtape>(mixTapeData);
 
             if (mixTape != null)
             {
@@ -31,7 +31,7 @@ namespace highspot
             }
 
             string changesData = Utility.ReadFile(Config.folder_assets + file_changes);
-            Change changes = JsonConvert.DeserializeObject<Change>(changesData);
+            Change? changes = JsonConvert.DeserializeObject<Change>(changesData);
 
             if (changes != null)
             {
@@ -42,32 +42,29 @@ namespace highspot
             {
                 foreach (IChange item in changes.changes)
                 {
-                    if (item is AddSong)
+                    if (item is AddSong i)
                     {
-                        AddSong i = (AddSong)item;
-                        Song isSongPresent = mixTape.songs.Where(x => x.id == i.id).FirstOrDefault();
-                        Playlist isPlaylistPresent = mixTape.playlists.Where(x => x.id == i.playlist_id).FirstOrDefault();
+                        Song? isSongPresent = mixTape.songs.FirstOrDefault(x => x.id == i.id);
+                        Playlist? isPlaylistPresent = mixTape.playlists.FirstOrDefault(x => x.id == i.playlist_id);
 
                         if (isSongPresent != null && isPlaylistPresent != null)
                         {
                             isPlaylistPresent.song_ids.Add(i.id);
                         }
                     }
-                    else if (item is AddPlaylist)
+                    else if (item is AddPlaylist ap)
                     {
-                        //                        AddPlaylist i = (AddPlaylist)item;
-                        User isUserPresent = mixTape.users.Where(x => x.id == ((AddPlaylist)item).user_id).FirstOrDefault();
-                        List<Song> isSongsPresent = mixTape.songs.Where(x => ((AddPlaylist)item).song_ids.Contains(x.id)).ToList();
+                        User? isUserPresent = mixTape.users.FirstOrDefault(x => x.id == ap.user_id);
+                        List<Song> isSongsPresent = mixTape.songs.Where(x => ap.song_ids.Contains(x.id)).ToList();
 
                         if (isUserPresent != null && isSongsPresent != null && isSongsPresent.Count > 0)
                         {
-                            mixTape.playlists.Add(new Playlist(((AddPlaylist)item).id, ((AddPlaylist)item).user_id, ((AddPlaylist)item).song_ids));
+                            mixTape.playlists.Add(new Playlist(ap.id, ap.user_id, ap.song_ids));
                         }
                     }
-                    else if (item is RemovePlaylist)
+                    else if (item is RemovePlaylist rp)
                     {
-                        RemovePlaylist i = ((RemovePlaylist)item);
-                        Playlist isPlaylistPresent = mixTape.playlists.Where(x => x.id == i.id).FirstOrDefault();
+                        Playlist? isPlaylistPresent = mixTape.playlists.FirstOrDefault(x => x.id == rp.id);
 
                         if (isPlaylistPresent != null)
                         {
