@@ -2,24 +2,27 @@
 
 ## Setup Instructions
 
-* Install latest .Net Core from https://dotnet.microsoft.com/download/dotnet-core/3.1
+* Install latest .Net Core from <https://dotnet.microsoft.com/download/dotnet-core/3.1>
 * Install the following dependency,
-```
+
+```csharp
 dotnet add package Newtonsoft.Json
 ```
 
 ## Run
 
-* dotnet run
+```csharp
+dotnet run
+```
 
-or 
+or
 
 * dotnet run mixtape-data.json changes.json output.json
 
 ## Future Improvements
 
 * write the code using SOLID and DRY principles
-* currently loading all the dataset and changes are applied in memory. 
+* currently loading all the dataset and changes are applied in memory.
 * This can be improved by,
   * using a database by which specific records could be fetched
   * caching can be introduced, where some/all data could be loaded using singleton pattern
